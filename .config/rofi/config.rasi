@@ -1,0 +1,16 @@
+configuration {
+	width: 30;
+	lines: 6;
+	columns: 2;
+	font: "Titillium Web 10";
+	show-icons: false;
+	line-margin: 10;
+	theme: "ayu-dark";
+	modi: "window,run,drun,file-browser-extended";
+	display-window: "";
+	display-run: "";
+	display-ssh: "";
+	display-drun: "";
+	display-combi: "";
+	display-file-browser-extended: "";
+}

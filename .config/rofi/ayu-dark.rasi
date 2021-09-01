@@ -1,0 +1,143 @@
+configuration {
+  font: "Titillium Web 10";
+  width: 30;
+  line-margin: 10;
+  lines: 6;
+  columns: 4;
+
+  display-ssh: "";
+  display-run: "";
+  display-drun: "";
+  display-window: "";
+  display-combi: "";
+  show-icons: false;
+}
+
+* {
+  brown0: #e6b450;
+  brown1: #ffb454;
+  brown2: #ff8f40;
+  brown3: #e6b673;
+  brown4: #ffee99;
+  brown5: #f29668;
+
+  black0: #0a0e14f0;
+  black1: #b3b1ad;
+  black2: #4d5566;
+  black3: #626a73;
+  black4: #00010a;
+  black5: #0d1016;
+  black6: #00010a;
+  black7: #000000;
+  black8: #323945;
+  black9: #464d5e;
+  black10: #273747;
+  black11: #1b2733;
+  black12: #304357;
+  black13: #393f4d;
+  black14: #242a35;
+
+  blue0: #39bae6;
+  blue1: #59c2ff;
+  blue2: #95e6cb;
+
+  green0: #c2d94c;
+  green1: #91b362;
+
+  red0: #f07178;
+  red1: #ff3333;
+  red2: #d96c75;
+
+  foreground: @black1;
+  accent: @brown0;
+  backlight: #ccffeedd;
+  background-color: transparent;
+
+  highlight: underline bold #eceff4;
+
+  transparent: rgba(46, 52, 64, 0);
+}
+
+window {
+  fullscreen: true;
+  location: center;
+  anchor: center;
+  transparency: "screenshot";
+  padding: 100px;
+  border: 0px;
+  border-radius: 3px;
+
+  background-color: @black0;
+  spacing: 0;
+  children: [mainbox];
+  orientation: horizontal;
+}
+
+mainbox {
+  spacing: 0;
+  children: [ inputbar, message, listview ];
+}
+
+message {
+  padding: 5;
+  border-color: @acccent;
+  border: 0px 2px 2px 2px;
+  background-color: @accent;
+}
+
+inputbar {
+  color: @foreground;
+  padding: 11px;
+
+  /* border: 1px;
+  border-radius: 3px 3px 0px 0px;
+  border-color: @accent; */
+}
+
+entry,
+prompt,
+case-indicator {
+  text-font: inherit;
+  text-color: inherit;
+}
+
+prompt {
+  margin: 0px 0.3em 0em 0em;
+}
+
+listview {
+  padding: 8px;
+  /* border-radius: 0px 0px 3px 3px;
+  border-color: @accent;
+  border: 0px 1px 1px 1px; */
+  dynamic: false;
+}
+
+element {
+  padding: 3px;
+  vertical-align: 0.5;
+  border-radius: 2px;
+  background-color: transparent;
+  color: @foreground;
+  text-color: rgb(216, 222, 233);
+}
+
+element selected.normal {
+  background-color: @accent;
+  text-color: #2e3440;
+}
+
+button {
+  padding: 6px;
+  color: @foreground;
+  horizontal-align: 0.5;
+
+  /* border: 2px 0px 2px 2px;
+  border-radius: 4px 0px 0px 4px;
+  border-color: @foreground; */
+}
+
+button selected normal {
+  border: 2px 0px 2px 2px;
+  border-color: @foreground;
+}
