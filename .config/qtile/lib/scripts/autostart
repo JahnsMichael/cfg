@@ -1,0 +1,9 @@
+#!/bin/sh
+lxsession &
+picom --experimental-backend &
+nitrogen --restore &
+volumeicon &
+# conky &
+dunst &
+xset s off -dpms
+# cmst &
