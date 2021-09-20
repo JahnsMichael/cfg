@@ -156,6 +156,20 @@ alias jadwal='kitty +kitten icat $HOME/Pictures/jadwal-kuliah.png'
 alias img='kitty +kitten icat'
 alias todo='micro $HOME/todo.md'
 
+# cd shortcut
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias .......="cd ../../../../../.."
+alias ........="cd ../../../../../../.."
+alias .........="cd ../../../../../../../.."
+alias ..........="cd ../../../../../../../../.."
+alias ...........="cd ../../../../../../../../../.."
+alias ............="cd ../../../../../../../../../../.."
+alias .............="cd ../../../../../../../../../../../.."
+
 # git aliases
 alias g="git"
 alias gf="git fuzzy status"
@@ -165,6 +179,14 @@ alias gstat="git status --short"
 alias gpush="git push"
 alias glog="git log --oneline"
 alias gcek="git checkout"
+
+# project aliases
+function sr {
+	export anchor=`exec pwd`
+}
+function gr {
+    cd $anchor
+}
 
 rmd() {
   pandoc $1 | lynx -stdin
@@ -180,18 +202,23 @@ alias sshkawung="ssh -i ~/.ssh/jahns.michael_kawung.key jahns.michael@kawung.cs.
 # starship prompt
 eval "$(starship init bash)"
 
+# bat
+export BAT_STYLE=full
+export BAT_THEME="Monokai Extended Bright"
+
 # fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # git fuzzy
 
 export PATH="/home/jahnsmichael/repos/git-fuzzy/bin:$PATH"
+export GF_VERTICAL_THRESHOLD="4.0"
+
 # use __WIDTH__ for horizontal scenarios
-export GF_HORIZONTAL_PREVIEW_PERCENT_CALCULATION='max(50, min(80, 100 - (7000 / __WIDTH__)))'
+# export GF_HORIZONTAL_PREVIEW_PERCENT_CALCULATION='max(50, min(80, 100 - (7000 / __WIDTH__)))'
 
 # use __HEIGHT__ for horizontal scenarios
-export GF_VERTICAL_PREVIEW_PERCENT_CALCULATION='max(50, min(80, 100 - (5000 / __HEIGHT__)))'
-
+# export GF_VERTICAL_PREVIEW_PERCENT_CALCULATION='max(50, min(80, 100 - (5000 / __HEIGHT__)))'
 
 # broot
 source /home/jahnsmichael/.config/broot/launcher/bash/br
