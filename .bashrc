@@ -241,8 +241,12 @@ _fzf_complete_gcek() {
 [ -n "$BASH" ] && complete -F _fzf_complete_gcek -o default -o bashdefault gcek
 
 # startup
-colorscript random
-bat $HOME/todo.md
+# colorscript random
+# bat -P $HOME/todo.md
 
 # Git Bare
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
