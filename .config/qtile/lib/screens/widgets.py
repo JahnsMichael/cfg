@@ -16,6 +16,7 @@ SEP_L = widget.Sep(
     linewidth=20
 )
 
+
 SEP_S_DARK = widget.Sep(
     foreground=colors.black[4],
     background=colors.black[4],
@@ -79,21 +80,26 @@ def get_top_widgets(systray=False):
                 }
             )
     
-    APP_BTN = [
-        get_app_btn(fontawesome.CODE, colors.brown[0], "/usr/bin/codium -n"),
-        get_app_btn(fontawesome.WEB, colors.blue[0], "/usr/bin/brave"),
-        get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm"),
-    ]
-
-    START_MENU = widget.Image(
-        filename="~/.config/qtile/assets/mirage-logo.png",
-        margin_x=7,
-        margin_y=5,
-        mouse_callbacks={
-            'Button1': lambda: qtile.cmd_spawn("rofi -show drun")
-        }
+    APP_BTN = widget.WidgetBox(
+        widgets=[
+            get_app_btn(fontawesome.SEARCH, colors.red[0], "rofi -show drun"),
+            get_app_btn(fontawesome.CODE, colors.brown[0], "/usr/bin/codium -n"),
+            get_app_btn(fontawesome.WEB, colors.blue[0], "/usr/bin/brave"),
+            get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm"),
+        ], 
+        text_closed=fontawesome.ARROW_RIGHT,
+        text_open=fontawesome.ARROW_LEFT,
+        font=fonts.ICON,
+        foreground=colors.blue[0]
     )
 
+    LINE_SEP = widget.TextBox(
+        text="‖",
+        padding=0,
+        fontsize=14,
+        foreground=colors.black[3],
+    )
+    
     # Split GroupBox into sections
     CODE_GROUPBOX = get_groupbox(
         fontawesome.CODE, [colors.brown[0], colors.brown[2]], ["1", "2"])
@@ -126,6 +132,7 @@ def get_top_widgets(systray=False):
             action_type=action, 
             font=fonts.ICON,
             fontshadow=colors.black[4],
+            fontsize=10,
             padding=5
         ) for action in ["KILL","MAX", "MIN", "FLOAT"]],
         SEP_S,
@@ -136,7 +143,7 @@ def get_top_widgets(systray=False):
             txt_floating=f"{fontawesome.FLOAT} ",
             txt_maximized=f"{fontawesome.MAXIMIZE} ",
             txt_minimized=f"{fontawesome.MINIMIZE} ",
-            padding=7,
+            padding=8,
             margin=0,
             icon_size=15,
             max_title_width=200,
@@ -146,85 +153,129 @@ def get_top_widgets(systray=False):
     ]
 
     MEMORY = [
-        # widget.TextBox(
-        #     text=fontawesome.MEMORY,
-        #     font=fonts.ICON,
-        #     foreground=colors.blue[0],
-        # ),
-        widget.Memory(
+        widget.TextBox(
+            text=fontawesome.SEP_POINTED_LEFT,
+            font=fonts.MONO,
             foreground=colors.blue[0],
+            padding=0,
+            fontsize=28
+        ),
+        widget.Memory(
+            background=colors.blue[0],
             format='{MemPercent}%{MemUsed: .0f}M/{MemTotal: .0f}M',
             font=fonts.MAIN
         ),
     ]
 
     BATTERY = [
-        # widget.TextBox(
-        #     text=fontawesome.BATTERY,
-        #     font=fonts.ICON,
-        #     foreground=colors.brown[5],
-        # ),
-        # widget.BatteryIcon(
-        #     theme_path="/home/jahnsmichael/.config/qtile/assets/battery",
-        #     padding=8,
-        # ),
-        widget.Battery(
+        widget.TextBox(
+            text=fontawesome.SEP_POINTED_LEFT,
+            font=fonts.MONO,
             foreground=colors.brown[5],
+            background=colors.blue[0],
+            padding=0,
+            fontsize=28
+        ),
+        widget.Battery(
+            background=colors.brown[5],
             format='{char} {percent:2.0%}',
             discharge_char='',
             low_percentage=0.1,
             low_foreground=colors.red[0],
             notify_below=20,
             show_sort_text=False,
-            font=fonts.MAIN
+            font=fonts.MAIN 
         )
     ]
     CLOCK = [
-        # widget.TextBox(
-        #     text=fontawesome.CLOCK,
-        #     font=fonts.ICON,
-        #     foreground=colors.green[0],
-        # ),
+        widget.TextBox(
+            text=fontawesome.SEP_POINTED_LEFT,
+            font=fonts.MONO,
+            foreground=colors.green[1],
+            background=colors.blue[0],
+            padding=0,
+            fontsize=28
+        ),
         widget.Clock(
             format='%a, %d %b %Y | %H:%M:%S',
-            foreground=colors.green[0],
-            font=fonts.MAIN
+            background=colors.green[1],
+            font=fonts.MAIN 
         ),
     ]
     
-    SYSTRAY = widget.Systray(
-        foreground=colors.black[5],
-        icon_size=15
-    )
-
-    POWER = widget.QuickExit(
-        default_text=fontawesome.POWER,
-        foreground=colors.red[0],
-        font=fonts.ICON,
-    )
-
-    TOP_WIDGETS = [
-        START_MENU,
-        *APP_BTN,
-        *CURRENT_WINDOW,
-        GROUPBOX,
-        widget.Chord(), SEP_S,
-        *MEMORY, SEP_S,
-        *BATTERY, SEP_S,
-        *CLOCK, SEP_L
+    SYSTRAY = [
+        widget.TextBox(
+            text=fontawesome.SEP_POINTED_LEFT,
+            font=fonts.MONO,
+            background=colors.green[1],
+            foreground=colors.magenta[1],
+            padding=0,
+            fontsize=28
+        ),
+        widget.Systray(
+            icon_size=15,
+            background=colors.magenta[1],
+        )
     ]
 
-    TOP_WIDGETS_SYSTRAY = [
-        START_MENU,
-        *APP_BTN,
+    def get_power_btn(text, cmd):
+        return widget.TextBox(
+            text=text,
+            font=fonts.ICON,
+            background=colors.red[0],
+            mouse_callbacks={
+                'Button1': cmd
+            }
+        )
+        
+    POWER = [
+        widget.TextBox(
+            text=" " + fontawesome.SEP_POINTED_LEFT,
+            font=fonts.MONO,
+            background=colors.magenta[1],
+            foreground=colors.red[0],
+            padding=0,
+            fontsize=28
+        ),
+        widget.WidgetBox(
+            widgets=[
+                get_power_btn(fontawesome.POWER, lambda:  qtile.cmd_spawn('shutdown now')),
+                get_power_btn(fontawesome.REBOOT, lambda:  qtile.cmd_spawn('reboot')),
+                get_power_btn(fontawesome.LOGOUT, lambda:  qtile.cmd_shutdown()),
+                get_power_btn(fontawesome.SLEEP, lambda:  qtile.cmd_spawn("betterlockscreen -s")),
+                get_power_btn(fontawesome.LOCK, lambda:  qtile.cmd_spawn("betterlockscreen -l")),
+            ], 
+            text_closed=fontawesome.POWER + "   ",
+            text_open=fontawesome.CLOSE + "   ",
+            background=colors.red[0],
+            font=fonts.ICON,
+        )
+    ]
+
+    TOP_WIDGETS = [
+        SEP_M,
+        APP_BTN, SEP_M,
+        LINE_SEP, SEP_S,
         *CURRENT_WINDOW,
         GROUPBOX,
         widget.Chord(), SEP_S,
         *MEMORY,
-        *BATTERY,
+        # *BATTERY,
+        *CLOCK
+    ]
+
+    TOP_WIDGETS_SYSTRAY = [
+        SEP_M,
+        APP_BTN, SEP_M,
+        LINE_SEP, SEP_S,
+        *CURRENT_WINDOW,
+        GROUPBOX,
+        widget.Chord(), SEP_S,
+        *MEMORY,
+        # *BATTERY,
         *CLOCK,
-        SYSTRAY, SEP_S,
-        POWER, SEP_S
+        *SYSTRAY,
+        *POWER
     ]
 
     if systray:
