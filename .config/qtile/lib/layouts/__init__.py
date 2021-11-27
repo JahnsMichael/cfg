@@ -6,7 +6,7 @@ from lib.const import colors, fonts
 layout_theme = {
     "border_width": 2,
     "font": fonts.MAIN,
-    # "margin": 3,
+    "margin": 3,
     "border_focus": colors.brown[2],
     "border_normal": colors.common['bg']
 }

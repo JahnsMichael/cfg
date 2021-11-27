@@ -11,10 +11,11 @@ from lib.screens.widgets import (
 
 
 def get_default_screen(systray=False):
-    attrs = {"size": 30, "opacity": 0.85}
+    attrs = {"size": 30, "opacity": 0.91}
     return Screen(
         top=bar.Bar(
-            get_top_widgets(systray), 
+            get_top_widgets(systray),
+            margin=[3, 3, 0, 3], 
             **attrs
         ),
         # bottom=bar.Bar(
