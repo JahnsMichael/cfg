@@ -6,4 +6,5 @@ volumeicon &
 # conky &
 dunst &
 xset s off -dpms
+cbatticon -l 20 -r 10 &
 # cmst &
