@@ -1,5 +1,5 @@
 configuration {
-  font: "Titillium Web 10";
+  font: "Fira Sans Light 10";
   width: 30;
   line-margin: 10;
   lines: 6;
