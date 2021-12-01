@@ -1,6 +1,13 @@
 from libqtile.config import Key
 from libqtile.lazy import lazy
 
+def toggle_cursor_warp(qtile):
+    qtile.config.cursor_warp = not qtile.config.cursor_warp
+    qtile.cmd_spawn(f'notify-send "Qtile Config" "cursor_warp set to {qtile.config.cursor_warp}"', shell=True)
+
+def toggle_follow_mouse_focus(qtile):
+    qtile.config.follow_mouse_focus = not qtile.config.follow_mouse_focus
+    qtile.cmd_spawn(f'notify-send "Qtile Config" "follow_mouse_focus set to {qtile.config.follow_mouse_focus}"', shell=True)
 
 CONTROL_KEYS = [
     Key(["control"], "r", lazy.restart(), desc="Restart Qtile"),
@@ -13,6 +20,10 @@ CONTROL_KEYS = [
         desc="Toggle top bar"),
     Key(["control"], "End", lazy.hide_show_bar(position="bottom"),
         desc="Toggle bottom bar"),
+    Key(["control"], "equal", lazy.function(toggle_cursor_warp),
+        desc="Toggle bottom cursor warp"),
+    Key(["control"], "minus", lazy.function(toggle_follow_mouse_focus),
+        desc="Toggle bottom follow_mouse_focus"),
     Key([], "BackSpace", lazy.spawn("dunstctl close"),
         desc="Close the last notification"),
     Key(["control"], "BackSpace", lazy.spawn("dunstctl close-all"),
