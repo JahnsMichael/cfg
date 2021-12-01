@@ -1,73 +1,96 @@
 from libqtile.config import Key
 from libqtile.lazy import lazy
 
+VIM_DICT = {
+    "Left": "h",
+    "Right": "l",
+    "Down": "j",
+    "Up": "k",
+}
+
 WINDOW_FOCUS_KEYS = [
-    Key([], "Left", lazy.layout.left(), desc="Move focus to left"),
-    Key([], "Right", lazy.layout.right(), desc="Move focus to right"),
-    Key([], "Down", lazy.layout.down(), desc="Move focus down"),
-    Key([], "Up", lazy.layout.up(), desc="Move focus up"),
-    Key([], "h", lazy.layout.left(), desc="Move focus to left"),
-    Key([], "l", lazy.layout.right(), desc="Move focus to right"),
-    Key([], "j", lazy.layout.down(), desc="Move focus down"),
-    Key([], "k", lazy.layout.up(), desc="Move focus up"),
+    *[
+        Key([], direction, getattr(lazy.layout, direction.lower())(),
+            desc=f"Move focus to {direction.lower()}" ) 
+        for direction in ["Left", "Right", "Up", "Down"]
+    ],
+    *[
+        Key([], VIM_DICT[direction], getattr(lazy.layout, direction.lower())(),
+            desc=f"Move focus to {direction.lower()}" ) 
+        for direction in ["Left", "Right", "Up", "Down"]
+    ],
+    Key([], "Next", lazy.group.next_window(), desc="Move focus to next window"),
+    Key([], "Prior", lazy.group.prev_window(), desc="Move focus to previous window"),
 ]
 
+def grow(qtile, direction):
+    if direction not in ["Left", "Right", "Up", "Down"] :
+        pass
+    if qtile.current_window.floating:
+        x_y_direction = {
+            "Left": (-15,0),
+            "Right": (15,0),
+            "Up": (0,-15),
+            "Down": (0,15),
+        }
+        qtile.current_window.cmd_resize_floating(*x_y_direction[direction])
+    else :
+        getattr(qtile.current_layout, f"cmd_grow_{direction.lower()}")()
+
 WINDOW_SIZE_KEYS = [
-    Key(["shift"], "Left", lazy.layout.grow_left(),
-        desc="Grow window to the left"),
-    Key(["shift"], "Right", lazy.layout.grow_right(),
-        desc="Grow window to the right"),
-    Key(["shift"], "Down", lazy.layout.grow_down(),
-        desc="Grow window down"),
-    Key(["shift"], "Up", lazy.layout.grow_up(), 
-        desc="Grow window up"),
-    Key(["shift"], "h", lazy.layout.grow_left(),
-        desc="Grow window to the left"),
-    Key(["shift"], "l", lazy.layout.grow_right(),
-        desc="Grow window to the right"),
-    Key(["shift"], "j", lazy.layout.grow_down(),
-        desc="Grow window down"),
-    Key(["shift"], "k", lazy.layout.grow_up(), 
-        desc="Grow window up"),
+    *[
+        Key(["shift"], direction, lazy.function(grow, direction),
+            desc=f"Grow window to the {direction.lower()}" ) 
+        for direction in ["Left", "Right", "Up", "Down"]
+    ],
+    *[
+        Key(["shift"], VIM_DICT[direction], lazy.function(grow, direction),
+            desc=f"Grow window to the {direction.lower()}" ) 
+        for direction in ["Left", "Right", "Up", "Down"]
+    ],
     Key([], "n", lazy.layout.normalize(),
         desc="Reset all window sizes"),
     Key(["mod1"], "Return", lazy.window.toggle_maximize(),
         desc="Toggle maximize window"),
 ]
 
+def move(qtile, direction):
+    if direction not in ["Left", "Right", "Up", "Down"] :
+        pass
+    if qtile.current_window.floating:
+        x_y_direction = {
+            "Left": (-15,0),
+            "Right": (15,0),
+            "Up": (0,-15),
+            "Down": (0,15),
+        }
+        qtile.current_window.cmd_move_floating(*x_y_direction[direction])
+    else :
+        getattr(qtile.current_layout, f"cmd_shuffle_{direction.lower()}")()
+
 WINDOW_MOVE_KEYS = [
-    Key(["mod1"], "Left", lazy.layout.shuffle_left(),
-        desc="Move window to the left"),
-    Key(["mod1"], "Right", lazy.layout.shuffle_right(),
-        desc="Move window to the right"),
-    Key(["mod1"], "Down", lazy.layout.shuffle_down(),
-        desc="Move window down"),
-    Key(["mod1"], "Up", lazy.layout.shuffle_up(), 
-        desc="Move window up"),
-    Key(["mod1", "shift"], "Left", lazy.layout.swap_column_left(),
-        desc="Swap column left"),
-    Key(["mod1", "shift"], "Right", lazy.layout.swap_column_right(),
-        desc="Swap column right"),
-    Key(["mod1", "shift"], "Down", lazy.layout.flip_down(),
-        desc="Swap column down"),
-    Key(["mod1", "shift"], "Up", lazy.layout.flip_up(),
-        desc="Swap column up"),
-    Key(["mod1"], "h", lazy.layout.shuffle_left(),
-        desc="Move window to the left"),
-    Key(["mod1"], "l", lazy.layout.shuffle_right(),
-        desc="Move window to the right"),
-    Key(["mod1"], "j", lazy.layout.shuffle_down(),
-        desc="Move window down"),
-    Key(["mod1"], "k", lazy.layout.shuffle_up(), 
-        desc="Move window up"),
-    Key(["mod1", "shift"], "h", lazy.layout.swap_column_left(),
-        desc="Swap column left"),
-    Key(["mod1", "shift"], "l", lazy.layout.swap_column_right(),
-        desc="Swap column right"),
-    Key(["mod1", "shift"], "j", lazy.layout.flip_down(),
-        desc="Swap column down"),
-    Key(["mod1", "shift"], "k", lazy.layout.flip_up(),
-        desc="Swap column up"),
+    *[
+        Key(["mod1"], direction, lazy.function(move, direction),
+            desc=f"Move window to the {direction.lower()}" ) 
+        for direction in ["Left", "Right", "Up", "Down"]
+    ],
+    *[
+        Key(["mod1"], VIM_DICT[direction], lazy.function(move, direction),
+            desc=f"Move window to the {direction.lower()}" ) 
+        for direction in ["Left", "Right", "Up", "Down"]
+    ],
+    *[
+        Key(["mod1", "shift"], direction, 
+            getattr(lazy.layout, f"swap_column_{direction.lower()}")(),
+            desc=f"Swap column {direction.lower()}" ) 
+        for direction in ["Left", "Right"]
+    ],
+    *[
+        Key(["mod1", "shift"], VIM_DICT[direction], 
+            getattr(lazy.layout, f"swap_column_{direction.lower()}")(),
+            desc=f"Swap column {direction.lower()}" ) 
+        for direction in ["Left", "Right"]
+    ],
     Key(["shift"], "backslash", lazy.layout.toggle_split()),
 ]
 
