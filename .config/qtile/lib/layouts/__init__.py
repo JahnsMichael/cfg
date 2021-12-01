@@ -16,9 +16,10 @@ def get_layouts():
     return [
         layout.Columns(
             **layout_theme,
-            border_normal_stack=colors.red[0],
+            border_normal_stack=colors.magenta[0],
             border_focus_stack=colors.blue[1],
-            insert_position=1
+            insert_position=1,
+            border_on_single=True,
         ),
         # BorderOnSingleBSP(
             # **layout_theme,
