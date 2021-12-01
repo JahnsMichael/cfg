@@ -4,6 +4,11 @@ from libqtile.config import (
     ScratchPad,
     DropDown
 )
+from lib.const.apps import ( 
+  WHATSAPP,
+  LINE,
+  WEB
+)
 
 GROUPS = [
     Group("1"),
@@ -18,8 +23,7 @@ GROUPS = [
     ]),
     Group("9", matches=[
         Match(wm_class="web.whatsapp.com"),  # Whatsapp Web
-        # LINE Browser Extension
-        Match(wm_class="ophjlpahpchlmihnnnihgmmeilfjmjjc__index.html"),
+        Match(wm_class="ophjlpahpchlmihnnnihgmmeilfjmjjc__index.html"), # LINE Browser Extension
     ]),
     Group("0")
 ]
