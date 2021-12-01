@@ -10,7 +10,7 @@ SCRIPTS_DIR = f'{HOME}/.config/qtile/scripts/'
 def screenshot(qtile):
     date = datetime.datetime.now().strftime("%m%d%Y-%H%M%S")
     filename = os.path.expanduser(f'~/Pictures/Screenshots/{date}.png')
-    qtile.cmd_spawn(f'maim -s {filename}')
+    qtile.cmd_spawn(f'maim -s | tee {filename} | xclip -selection clipboard -t image/png', shell=True)
     
 def xrandr():
     active_monitors = get_monitors()
