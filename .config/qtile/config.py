@@ -42,9 +42,8 @@ layouts = get_layouts()
 
 widget_defaults = dict(
     font=fonts.MAIN,
-    fontsize=11,
-    padding=10,
-    background=colors.common["bg"]
+    fontsize=10,
+    # background=colors.common["bg"]
 )
 extension_defaults = widget_defaults.copy()
 screens = get_screens()
