@@ -91,12 +91,14 @@ WINDOW_MOVE_KEYS = [
             desc=f"Swap column {direction.lower()}" ) 
         for direction in ["Left", "Right"]
     ],
-    Key(["shift"], "backslash", lazy.layout.toggle_split()),
+    Key([], "backslash", lazy.layout.toggle_split()),
 ]
 
 WINDOW_TOGGLE_FLOATING_KEYS = [
     Key(["shift"], "f", lazy.window.toggle_floating(),
-        desc="Toggle floating"),
+        desc="Toggle floating"),    
+    Key(["shift"], "s", lazy.window.static(),
+        desc="Toggle static"),
 ]
 
 WINDOW_KILL_KEYS = [
