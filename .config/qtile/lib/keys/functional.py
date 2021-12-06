@@ -19,7 +19,7 @@ ROFI_KEYS = [
             desc="rofi -show drun"),
     Key(['mod1'], "space", lazy.spawn(["rofi", "-show", "file-browser-extended"]),
         desc="rofi -show file-browser-extended"),
-    Key([], "b", lazy.spawn(["rofi-bluetooth"]),
+    Key(['control'], "b", lazy.spawn(["rofi-bluetooth"]),
         desc="rofi-bluetooth"),
 ]
 
@@ -28,15 +28,21 @@ def sosmed(qtile):
     qtile.cmd_spawn('/usr/bin/brave --app=chrome-extension://ophjlpahpchlmihnnnihgmmeilfjmjjc/index.html')
 
 APP_KEYS = [
-    Key(['control'], "1", lazy.spawn([apps.CODE]),
+    Key(['control'], "1", lazy.spawn(apps.CODE),
         desc="Spawn text editor."),
-    Key(['control'], "3", lazy.spawn([apps.WEB]),
-        desc="Spawn web browser."),
-    Key(['control'], "6", lazy.spawn([apps.WEB]),
-        desc="Spawn file browser."),
+    Key(['control'], "3", lazy.spawn(apps.WEB),
+        desc="Spawn web browser."),    
+    Key(['control'], "6", lazy.spawn(apps.FILE),
+        desc="Spawn file browser."),    
     Key(['control'], "9", lazy.function(sosmed),
         desc="Spawn social media's apps."),
-    Key(['shift'], "Return", lazy.spawn([apps.TERM]),
+    Key(['shift'], "Return", lazy.spawn(apps.TERM),
+        desc="Spawn terminal."),    
+    Key([], "f", lazy.spawn(apps.FILE),
+        desc="Spawn file browser."),
+    Key([], "b", lazy.spawn(apps.WEB),
+        desc="Spawn web browser."),
+    Key([], "t", lazy.spawn(apps.TERM),
         desc="Spawn terminal."),
 ]
 
