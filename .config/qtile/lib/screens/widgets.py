@@ -3,17 +3,25 @@ from lib.const import colors, fontawesome, fonts
 from lib.screens.custom_widgets.tasklist import CustomTaskList
 from lib.screens.custom_widgets.window_control import WindowControl
 
-SEP_S = widget.Sep(
-    foreground=colors.common['bg'],
-    linewidth=5
+SEP_S = widget.TextBox(
+    text=" ",
+    font=fonts.POWERLINE,
+    padding=0,
+    fontsize=10
 )
-SEP_M = widget.Sep(
-    foreground=colors.common['bg'],
-    linewidth=10
+
+SEP_M = widget.TextBox(
+    text=" ",
+    font=fonts.POWERLINE,
+    padding=0,
+    fontsize=15
 )
-SEP_L = widget.Sep(
-    foreground=colors.common['bg'],
-    linewidth=20
+
+SEP_L = widget.TextBox(
+    text=" ",
+    font=fonts.POWERLINE,
+    padding=0,
+    fontsize=20
 )
 
 
@@ -33,54 +41,63 @@ SEP_L_DARK = widget.Sep(
     linewidth=5
 )
 
+def powerlined(main_widget, color=None, margin_left=3, margin_right=3):
+
+    if not color:
+        if isinstance(main_widget, list) or not main_widget.background:
+            color = colors.common["bg"]
+        else:
+            color = main_widget.background
+            
+    left = [
+        widget.TextBox(
+            text=" ",
+            font=fonts.POWERLINE,
+            padding=0,
+            fontsize=margin_left,
+            foreground=color
+        ),
+        widget.TextBox(
+            text=fontawesome.SEP_ROUNDED_LEFT,
+            font=fonts.POWERLINE,
+            padding=0,
+            foreground=color,
+            fontsize=18
+        ),
+    ]    
+    right = [
+        widget.TextBox(
+            text=fontawesome.SEP_ROUNDED_RIGHT,
+            font=fonts.POWERLINE,
+            padding=0,
+            fontsize=18,
+            foreground=color
+        ),
+        widget.TextBox(
+            text=" ",
+            font=fonts.POWERLINE,
+            padding=0,
+            fontsize=margin_right
+        ),
+    ]
+    if isinstance(main_widget, list):
+        return [*left, *main_widget, *right]
+    return [*left, main_widget, *right]
+
 def get_top_widgets(systray=False):
 
-    group_box_attr = {
-        "rounded": False,
-        "highlight_method": "line",
-        "other_current_screen_border": colors.common['ui'],
-        "other_screen_border": colors.common['ui'],
-        "inactive": colors.common['ui'],
-        "urgent_border": colors.red[2],
-        "padding": 5,
-    }
-
-    def get_groupbox(text, scheme, groups):
-        return [
-            # widget.TextBox(
-                # text=text,
-                # font=fonts.ICON,
-                # foreground=scheme[0],
-            # ),
-            widget.GroupBox(
-                **group_box_attr,
-                highlight_color=[colors.common['bg'], scheme[0]],
-                this_screen_border=scheme[0],
-                this_current_screen_border=scheme[1],
-                visible_groups=groups[0],
-            ),
-            widget.GroupBox(
-                **group_box_attr,
-                highlight_color=[colors.common['bg'], scheme[0]],
-                this_screen_border=scheme[0],
-                this_current_screen_border=scheme[1],
-                visible_groups=groups[1:],
-                hide_unused=True
-            )
-        ]
-
     def get_app_btn(text, color, cmd):
-            return widget.TextBox(
-                text=text,
-                font=fonts.ICON,
-                foreground=color,
-                fontshadow=colors.black[4],
-                mouse_callbacks={
-                    'Button1': lambda: qtile.cmd_spawn(cmd)
-                }
-            )
+        return widget.TextBox(
+            text=text,
+            font=fonts.ICON,
+            foreground=color,
+            background=colors.common["bg"],
+            mouse_callbacks={
+                'Button1': lambda: qtile.cmd_spawn(cmd)
+            }
+        )
     
-    APP_BTN = widget.WidgetBox(
+    APP_BTN = powerlined(widget.WidgetBox(
         widgets=[
             get_app_btn(fontawesome.SEARCH, colors.red[0], "rofi -show drun"),
             get_app_btn(fontawesome.CODE, colors.brown[0], "/usr/bin/codium -n"),
@@ -88,135 +105,69 @@ def get_top_widgets(systray=False):
             get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm"),
         ], 
         text_closed=fontawesome.ARROW_RIGHT,
-        text_open=fontawesome.ARROW_LEFT,
+        text_open=fontawesome.ARROW_LEFT + "  ",
         font=fonts.ICON,
-        foreground=colors.blue[0]
-    )
-
-    LINE_SEP = widget.TextBox(
-        text="‖",
-        padding=0,
-        fontsize=14,
-        foreground=colors.black[3],
-    )
+        foreground=colors.blue[0],
+        background=colors.common["bg"],
+    ))
     
-    # Split GroupBox into sections
-    CODE_GROUPBOX = get_groupbox(
-        fontawesome.CODE, [colors.brown[0], colors.brown[2]], ["1", "2"])
-    WEB_GROUPBOX = get_groupbox(
-        fontawesome.WEB, [colors.blue[0], colors.blue[1]], ["3", "4", "5"])
-    DOCS_GROUPBOX = get_groupbox(
-        fontawesome.FOLDER, [colors.green[0], colors.green[1]], ["6", "7"])
-    MEET_GROUPBOX = get_groupbox(
-        fontawesome.CAMERA, [colors.red[0], colors.red[1]], ["8", "9", "0"])
-    GROUPBOXES = [
-        *CODE_GROUPBOX,
-        SEP_S,
-        *WEB_GROUPBOX,
-        SEP_S,
-        *DOCS_GROUPBOX,
-        SEP_S,
-        *MEET_GROUPBOX
-    ]
-    GROUPBOX = widget.GroupBox(
-        **group_box_attr,
-        highlight_color=colors.common["bg"],
+    GROUPBOX = powerlined(widget.GroupBox(
+        other_current_screen_border=colors.common['ui'],
+        other_screen_border=colors.common['ui'],
+        inactive=colors.common['ui'],
+        urgent_border=colors.red[2],
+        padding=5,
+        rounded=True,
+        highlight_method="line",
         this_screen_border=colors.brown[3],
         this_current_screen_border=colors.blue[1],
-        hide_unused=True
-    )
-
+        hide_unused=True,
+        background=colors.common["bg"],
+        center_aligned=True,
+    ))
+    
     CURRENT_WINDOW = [
-        SEP_S,
         *[WindowControl(
-            action_type=action, 
+            action_type=action,
             font=fonts.ICON,
-            fontshadow=colors.black[4],
             fontsize=10,
             padding=5
         ) for action in ["KILL","MAX", "MIN", "FLOAT"]],
         SEP_S,
         CustomTaskList(
             border=colors.brown[2],
-            rounded=False,
+            borderwidth=0,
+            rounded=True,
+            title_width_method="uniform",
             highlight_method='block',
             txt_floating=f"{fontawesome.FLOAT} ",
             txt_maximized=f"{fontawesome.MAXIMIZE} ",
             txt_minimized=f"{fontawesome.MINIMIZE} ",
-            padding=8,
             margin=0,
-            icon_size=15,
+            spacing=5,
+            icon_size=12,
             max_title_width=200,
-            urgent_border=colors.red[0]
-        ),
-        SEP_S
-    ]
-
-    MEMORY = [
-        widget.TextBox(
-            text=fontawesome.SEP_POINTED_LEFT,
-            font=fonts.MONO,
-            foreground=colors.blue[0],
-            padding=0,
-            fontsize=28
-        ),
-        widget.Memory(
-            background=colors.blue[0],
-            format='{MemPercent}%{MemUsed: .0f}M/{MemTotal: .0f}M',
-            font=fonts.MAIN
+            urgent_border=colors.red[0],
         ),
     ]
 
-    BATTERY = [
-        widget.TextBox(
-            text=fontawesome.SEP_POINTED_LEFT,
-            font=fonts.MONO,
-            foreground=colors.brown[5],
-            background=colors.blue[0],
-            padding=0,
-            fontsize=28
-        ),
-        widget.Battery(
-            background=colors.brown[5],
-            format='{char} {percent:2.0%}',
-            discharge_char='',
-            low_percentage=0.1,
-            low_foreground=colors.red[0],
-            notify_below=20,
-            show_sort_text=False,
-            font=fonts.MAIN 
-        )
-    ]
-    CLOCK = [
-        widget.TextBox(
-            text=fontawesome.SEP_POINTED_LEFT,
-            font=fonts.MONO,
-            foreground=colors.green[1],
-            background=colors.blue[0],
-            padding=0,
-            fontsize=28
-        ),
-        widget.Clock(
-            format='%a, %d %b %Y | %H:%M:%S',
-            background=colors.green[1],
-            font=fonts.MAIN 
-        ),
-    ]
+    MEMORY = powerlined(widget.Memory(
+        format='{MemPercent}%{MemUsed: .0f}M/{MemTotal: .0f}M',
+        background=colors.magenta[0],
+        foreground=colors.common["bg"],
+        font=fonts.MAIN
+    ))
     
-    SYSTRAY = [
-        widget.TextBox(
-            text=fontawesome.SEP_POINTED_LEFT,
-            font=fonts.MONO,
-            background=colors.green[1],
-            foreground=colors.magenta[1],
-            padding=0,
-            fontsize=28
-        ),
-        widget.Systray(
-            icon_size=15,
-            background=colors.magenta[1],
-        )
-    ]
+    CLOCK = powerlined(widget.Clock(
+        format='%a, %d %b %Y | %H:%M:%S',
+        background=colors.blue[0],
+        foreground=colors.common["bg"],
+        font=fonts.MAIN 
+    ))
+    
+    SYSTRAY = widget.Systray(
+        icon_size=15
+    )
 
     def get_power_btn(text, cmd):
         return widget.TextBox(
@@ -228,54 +179,39 @@ def get_top_widgets(systray=False):
             }
         )
         
-    POWER = [
-        widget.TextBox(
-            text=" " + fontawesome.SEP_POINTED_LEFT,
-            font=fonts.MONO,
-            background=colors.magenta[1],
-            foreground=colors.red[0],
-            padding=0,
-            fontsize=28
-        ),
-        widget.WidgetBox(
-            widgets=[
-                get_power_btn(fontawesome.POWER, lambda:  qtile.cmd_spawn('shutdown now')),
-                get_power_btn(fontawesome.REBOOT, lambda:  qtile.cmd_spawn('reboot')),
-                get_power_btn(fontawesome.LOGOUT, lambda:  qtile.cmd_shutdown()),
-                get_power_btn(fontawesome.SLEEP, lambda:  qtile.cmd_spawn("betterlockscreen -s")),
-                get_power_btn(fontawesome.LOCK, lambda:  qtile.cmd_spawn("betterlockscreen -l")),
-            ], 
-            text_closed=fontawesome.POWER + "   ",
-            text_open=fontawesome.CLOSE + "   ",
-            background=colors.red[0],
-            font=fonts.ICON,
-        )
-    ]
+    POWER = powerlined(widget.WidgetBox(
+        widgets=[
+            get_power_btn(fontawesome.POWER, lambda:  qtile.cmd_spawn('shutdown now')),
+            get_power_btn(fontawesome.REBOOT, lambda:  qtile.cmd_spawn('reboot')),
+            get_power_btn(fontawesome.LOGOUT, lambda:  qtile.cmd_shutdown()),
+            get_power_btn(fontawesome.SLEEP, lambda:  qtile.cmd_spawn("betterlockscreen -s")),
+            get_power_btn(fontawesome.LOCK, lambda:  qtile.cmd_spawn("betterlockscreen -l")),
+        ], 
+        text_closed=fontawesome.POWER,
+        text_open=fontawesome.CLOSE + "   ",
+        background=colors.red[0],
+        font=fonts.ICON,
+    ))
 
     TOP_WIDGETS = [
-        SEP_M,
-        APP_BTN, SEP_M,
-        LINE_SEP, SEP_S,
+        *APP_BTN, SEP_M,
         *CURRENT_WINDOW,
-        GROUPBOX,
-        widget.Chord(), SEP_S,
+        widget.Chord(),
+        *GROUPBOX,
         *MEMORY,
-        # *BATTERY,
-        *CLOCK
+        *CLOCK,
+        *POWER,
     ]
 
     TOP_WIDGETS_SYSTRAY = [
-        SEP_M,
-        APP_BTN, SEP_M,
-        LINE_SEP, SEP_S,
+        *APP_BTN, SEP_M,
         *CURRENT_WINDOW,
-        GROUPBOX,
-        widget.Chord(), SEP_S,
+        widget.Chord(),
+        *GROUPBOX,
         *MEMORY,
-        # *BATTERY,
-        *CLOCK,
-        *SYSTRAY,
-        *POWER
+        *CLOCK, SEP_M,
+        SYSTRAY, SEP_M,
+        *POWER,
     ]
 
     if systray:
