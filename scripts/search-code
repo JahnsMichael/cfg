@@ -22,4 +22,5 @@ IFS=: read -ra selected < <(
       --preview 'bat --style="numbers,header" --color=always {1} --highlight-line {2}' \
       --preview-window 'down,60%,border-rounded,+{2}+3/3,~3'
 )
+
 [ -n "${selected[0]}" ] && micro "${selected[0]}" "+${selected[1]}"
