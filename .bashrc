@@ -155,6 +155,7 @@ alias mc='micro'
 alias jadwal='kitty +kitten icat $HOME/Pictures/jadwal-kuliah.png'
 alias img='kitty +kitten icat'
 alias todo='micro $HOME/todo.md'
+alias yt='ytfzf -t --detach'
 
 # cd shortcut
 alias ..="cd .."
@@ -196,9 +197,6 @@ pandocwatch() {
 	ls -d $1 | entr -r pandoc --citeproc --pdf-engine=xelatex $1 -o $2
 }
 
-# alias for PPL purposes
-alias sshkawung="ssh -i ~/.ssh/jahns.michael_kawung.key jahns.michael@kawung.cs.ui.ac.id -p 12122"
-
 # starship prompt
 eval "$(starship init bash)"
 
@@ -224,10 +222,12 @@ export GF_VERTICAL_THRESHOLD="4.0"
 source /home/jahnsmichael/.config/broot/launcher/bash/br
 
 # fzf scripts
+export FZF_DEFAULT_OPTS='--layout=reverse --border'
+
 _fzf_complete_gadd() {
     _fzf_complete --multi --reverse --prompt="gadd> " -- "$@" < <(
 		git ls-files -m -o --exclude-standard
-	)    
+	)
 }
 
 [ -n "$BASH" ] && complete -F _fzf_complete_gadd -o default -o bashdefault gadd
@@ -235,10 +235,13 @@ _fzf_complete_gadd() {
 _fzf_complete_gcek() {
     _fzf_complete --reverse --prompt="gcek> " -- "$@" < <(
 		git branch | cut -c 3-
-	)    
+	)
 }
 
 [ -n "$BASH" ] && complete -F _fzf_complete_gcek -o default -o bashdefault gcek
+
+source /home/jahnsmichael/repos/fzf-tab-completion/bash/fzf-bash-completion.sh
+bind -x '"\t": fzf_bash_completion'
 
 # startup
 # colorscript random
@@ -246,6 +249,7 @@ _fzf_complete_gcek() {
 
 # Git Bare
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias cfgf='cfg fuzzy status'
 
 # pass
 export PASSWORD_STORE_ENABLE_EXTENSIONS=true
