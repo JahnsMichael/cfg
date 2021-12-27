@@ -15,7 +15,8 @@
 
 from typing import List  # noqa: F401
 
-from libqtile import hook
+from libqtile import hook, qtile
+from libqtile.log_utils import logger
 
 from lib.scripts import xrandr, get_monitors
 from lib.screens import get_screens
@@ -52,6 +53,54 @@ screens = get_screens()
 @hook.subscribe.startup
 def every_start():
     xrandr()
+
+# @hook.subscribe.float_change
+# def float_change():
+    # try:
+        # if qtile.current_window.floating:
+            # qtile.config.follow_mouse_focus = False
+            # qtile.config.cursor_warp = False
+        # else:
+            # qtile.config.follow_mouse_focus = True
+            # qtile.config.cursor_warp = True
+    # except AttributeError:
+        # pass
+
+@hook.subscribe.focus_change
+def focus_change():
+    # turn off follow_mouse_focus if float
+    # try:
+        # if qtile.current_window.floating:
+            # qtile.config.follow_mouse_focus = False
+            # qtile.config.cursor_warp = False
+        # else:
+            # qtile.config.follow_mouse_focus = True
+            # qtile.config.cursor_warp = True
+    # except AttributeError:
+        # pass
+
+    # pinned windows
+    if not getattr(qtile.config, "pinned", False):
+        return
+
+    pinned = qtile.config.pinned
+    screen = qtile.current_screen.index
+
+    if screen not in pinned.keys():
+        return
+
+    for window in pinned[screen]:
+        window.toscreen(screen)
+        window.cmd_bring_to_front()
+
+@hook.subscribe.client_killed
+def client_killed(killed_window):
+    # remove from pinned windows
+    if not getattr(qtile.config, "pinned_windows", False):
+        return
+
+    if killed_window in qtile.config.pinned_windows:
+        qtile.config.pinned_windows.remove(killed_window)
 
 
 # Drag floating layouts.
