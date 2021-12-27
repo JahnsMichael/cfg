@@ -1,5 +1,6 @@
 from libqtile.config import Key
 from libqtile.lazy import lazy
+from libqtile.log_utils import logger
 
 VIM_DICT = {
     "Left": "h",
@@ -11,12 +12,12 @@ VIM_DICT = {
 WINDOW_FOCUS_KEYS = [
     *[
         Key([], direction, getattr(lazy.layout, direction.lower())(),
-            desc=f"Move focus to {direction.lower()}" ) 
+            desc=f"Move focus to {direction.lower()}" )
         for direction in ["Left", "Right", "Up", "Down"]
     ],
     *[
         Key([], VIM_DICT[direction], getattr(lazy.layout, direction.lower())(),
-            desc=f"Move focus to {direction.lower()}" ) 
+            desc=f"Move focus to {direction.lower()}" )
         for direction in ["Left", "Right", "Up", "Down"]
     ],
     Key([], "Next", lazy.group.next_window(), desc="Move focus to next window"),
@@ -28,10 +29,10 @@ def grow(qtile, direction):
         pass
     if qtile.current_window.floating:
         x_y_direction = {
-            "Left": (-15,0),
-            "Right": (15,0),
-            "Up": (0,-15),
-            "Down": (0,15),
+            "Left": (-30,0),
+            "Right": (30,0),
+            "Up": (0,-30),
+            "Down": (0,30),
         }
         qtile.current_window.cmd_resize_floating(*x_y_direction[direction])
     else :
@@ -40,12 +41,12 @@ def grow(qtile, direction):
 WINDOW_SIZE_KEYS = [
     *[
         Key(["shift"], direction, lazy.function(grow, direction),
-            desc=f"Grow window to the {direction.lower()}" ) 
+            desc=f"Grow window to the {direction.lower()}" )
         for direction in ["Left", "Right", "Up", "Down"]
     ],
     *[
         Key(["shift"], VIM_DICT[direction], lazy.function(grow, direction),
-            desc=f"Grow window to the {direction.lower()}" ) 
+            desc=f"Grow window to the {direction.lower()}" )
         for direction in ["Left", "Right", "Up", "Down"]
     ],
     Key([], "n", lazy.layout.normalize(),
@@ -59,10 +60,10 @@ def move(qtile, direction):
         pass
     if qtile.current_window.floating:
         x_y_direction = {
-            "Left": (-15,0),
-            "Right": (15,0),
-            "Up": (0,-15),
-            "Down": (0,15),
+            "Left": (-30,0),
+            "Right": (30,0),
+            "Up": (0,-30),
+            "Down": (0,30),
         }
         qtile.current_window.cmd_move_floating(*x_y_direction[direction])
     else :
@@ -71,34 +72,54 @@ def move(qtile, direction):
 WINDOW_MOVE_KEYS = [
     *[
         Key(["mod1"], direction, lazy.function(move, direction),
-            desc=f"Move window to the {direction.lower()}" ) 
+            desc=f"Move window to the {direction.lower()}" )
         for direction in ["Left", "Right", "Up", "Down"]
     ],
     *[
         Key(["mod1"], VIM_DICT[direction], lazy.function(move, direction),
-            desc=f"Move window to the {direction.lower()}" ) 
+            desc=f"Move window to the {direction.lower()}" )
         for direction in ["Left", "Right", "Up", "Down"]
     ],
     *[
-        Key(["mod1", "shift"], direction, 
+        Key(["mod1", "shift"], direction,
             getattr(lazy.layout, f"swap_column_{direction.lower()}")(),
-            desc=f"Swap column {direction.lower()}" ) 
+            desc=f"Swap column {direction.lower()}" )
         for direction in ["Left", "Right"]
     ],
     *[
-        Key(["mod1", "shift"], VIM_DICT[direction], 
+        Key(["mod1", "shift"], VIM_DICT[direction],
             getattr(lazy.layout, f"swap_column_{direction.lower()}")(),
-            desc=f"Swap column {direction.lower()}" ) 
+            desc=f"Swap column {direction.lower()}" )
         for direction in ["Left", "Right"]
     ],
-    Key([], "backslash", lazy.layout.toggle_split()),
 ]
 
-WINDOW_TOGGLE_FLOATING_KEYS = [
+def toggle_pin(qtile):
+    if not getattr(qtile.config, "pinned", False):
+        setattr(qtile.config, "pinned", dict())
+
+    pinned = qtile.config.pinned
+    screen = qtile.current_screen.index
+    window = qtile.current_window
+
+    if screen not in pinned.keys():
+        pinned[screen] = list()
+    if window not in pinned[screen]:
+        pinned[screen].append(window)
+        window.cmd_bring_to_front()
+        window.cmd_enable_floating()
+    else:
+        pinned[screen].remove(window)
+        window.cmd_disable_floating()
+
+WINDOW_TOGGLE_KEYS = [
+    Key([], "backslash", lazy.layout.toggle_split()),
     Key(["shift"], "f", lazy.window.toggle_floating(),
-        desc="Toggle floating"),    
-    Key(["shift"], "s", lazy.window.static(),
-        desc="Toggle static"),
+        desc="Toggle floating"),
+    Key([], "p", lazy.function(toggle_pin),
+        desc="Toggle pin window"),
+    Key(["shift"], "p", lazy.window.static(0),
+        desc="Toggle pin window, with static"),
 ]
 
 WINDOW_KILL_KEYS = [
@@ -110,5 +131,5 @@ WINDOW_KEYS = [
     *WINDOW_KILL_KEYS,
     *WINDOW_MOVE_KEYS,
     *WINDOW_SIZE_KEYS,
-    *WINDOW_TOGGLE_FLOATING_KEYS
+    *WINDOW_TOGGLE_KEYS
 ]
