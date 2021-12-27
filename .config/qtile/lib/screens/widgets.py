@@ -48,7 +48,7 @@ def powerlined(main_widget, color=None, margin_left=3, margin_right=3):
             color = colors.common["bg"]
         else:
             color = main_widget.background
-            
+
     left = [
         widget.TextBox(
             text=" ",
@@ -64,7 +64,7 @@ def powerlined(main_widget, color=None, margin_left=3, margin_right=3):
             foreground=color,
             fontsize=18
         ),
-    ]    
+    ]
     right = [
         widget.TextBox(
             text=fontawesome.SEP_ROUNDED_RIGHT,
@@ -96,21 +96,21 @@ def get_top_widgets(systray=False):
                 'Button1': lambda: qtile.cmd_spawn(cmd)
             }
         )
-    
+
     APP_BTN = powerlined(widget.WidgetBox(
         widgets=[
             get_app_btn(fontawesome.SEARCH, colors.red[0], "rofi -show drun"),
             get_app_btn(fontawesome.CODE, colors.brown[0], "/usr/bin/codium -n"),
             get_app_btn(fontawesome.WEB, colors.blue[0], "/usr/bin/brave"),
             get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm"),
-        ], 
+        ],
         text_closed=fontawesome.ARROW_RIGHT,
         text_open=fontawesome.ARROW_LEFT + "  ",
         font=fonts.ICON,
         foreground=colors.blue[0],
         background=colors.common["bg"],
     ))
-    
+
     GROUPBOX = powerlined(widget.GroupBox(
         other_current_screen_border=colors.common['ui'],
         other_screen_border=colors.common['ui'],
@@ -125,7 +125,7 @@ def get_top_widgets(systray=False):
         background=colors.common["bg"],
         center_aligned=True,
     ))
-    
+
     CURRENT_WINDOW = [
         *[WindowControl(
             action_type=action,
@@ -157,14 +157,21 @@ def get_top_widgets(systray=False):
         foreground=colors.common["bg"],
         font=fonts.MAIN
     ))
-    
+
     CLOCK = powerlined(widget.Clock(
         format='%a, %d %b %Y | %H:%M:%S',
         background=colors.blue[0],
         foreground=colors.common["bg"],
-        font=fonts.MAIN 
+        font=fonts.MAIN
     ))
-    
+
+    POMODORO = powerlined(widget.Pomodoro(
+        color_active=colors.common['accent'],
+        color_break=colors.green[0],
+        color_inactive=colors.common['fg'],
+        background=colors.common['bg'],
+    ))
+
     SYSTRAY = widget.Systray(
         icon_size=15
     )
@@ -178,7 +185,7 @@ def get_top_widgets(systray=False):
                 'Button1': cmd
             }
         )
-        
+
     POWER = powerlined(widget.WidgetBox(
         widgets=[
             get_power_btn(fontawesome.POWER, lambda:  qtile.cmd_spawn('shutdown now')),
@@ -186,7 +193,7 @@ def get_top_widgets(systray=False):
             get_power_btn(fontawesome.LOGOUT, lambda:  qtile.cmd_shutdown()),
             get_power_btn(fontawesome.SLEEP, lambda:  qtile.cmd_spawn("betterlockscreen -s")),
             get_power_btn(fontawesome.LOCK, lambda:  qtile.cmd_spawn("betterlockscreen -l")),
-        ], 
+        ],
         text_closed=fontawesome.POWER,
         text_open=fontawesome.CLOSE + "   ",
         background=colors.red[0],
@@ -198,6 +205,7 @@ def get_top_widgets(systray=False):
         *CURRENT_WINDOW,
         widget.Chord(),
         *GROUPBOX,
+        *POMODORO,
         *MEMORY,
         *CLOCK,
         *POWER,
@@ -208,6 +216,7 @@ def get_top_widgets(systray=False):
         *CURRENT_WINDOW,
         widget.Chord(),
         *GROUPBOX,
+        *POMODORO,
         *MEMORY,
         *CLOCK, SEP_M,
         SYSTRAY, SEP_M,
@@ -292,7 +301,7 @@ def get_bottom_widgets(systray=False):
         POWER,
         SEP_L_DARK
     ]
-    
+
     if systray:
         return BOTTOM_WIDGETS_SYSTRAY
     return BOTTOM_WIDGETS
