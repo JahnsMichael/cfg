@@ -6,8 +6,6 @@ from lib.const import apps
 SCRATCHPAD_KEYS = [
     Key([], "Return", lazy.group["scratchpad"].dropdown_toggle('term'),
         desc="Launch terminal"),
-    Key([], "backslash", lazy.group["scratchpad"].dropdown_toggle('mocp'),
-        desc="Launch mocp"),
 ]
 
 GROUP_CYCLE_KEYS = [
