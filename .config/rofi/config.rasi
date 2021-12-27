@@ -5,7 +5,6 @@ configuration {
 	font: "Titillium Web 10";
 	show-icons: false;
 	line-margin: 10;
-	theme: "ayu-dark";
 	modi: "window,run,drun,file-browser-extended";
 	display-window: "";
 	display-run: "";
@@ -14,3 +13,5 @@ configuration {
 	display-combi: "";
 	display-file-browser-extended: "";
 }
+
+@theme "ayu-dark"
