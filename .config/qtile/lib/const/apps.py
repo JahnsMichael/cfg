@@ -1,9 +1,11 @@
 CODE = "/usr/bin/codium -n"
-TERM = "/usr/bin/kitty"
+TERM = "/usr/bin/alacritty"
 FILE = "/usr/bin/pcmanfm"
-WEB = "/usr/bin/brave --disable-features=SendMouseLeaveEvents"
 PAMAC = "/usr/bin/pamac-manager"
-WHATSAPP = f"{WEB} --app=https://web.whatsapp.com"
-LINE = f"{WEB} --app=chrome-extension://ophjlpahpchlmihnnnihgmmeilfjmjjc/index.html"
-PENPOT = f"{WEB} --app=https://design.penpot.app/"
 INKSCAPE = "/home/jahnsmichael/Applications/Inkscape-4035a4f-x86_64.AppImage"
+
+QUTEBROWSER = "/usr/bin/qutebrowser"
+BRAVE = "/usr/bin/brave --disable-features=SendMouseLeaveEvents"
+WEB = BRAVE
+WHATSAPP = f"{BRAVE} --app=https://web.whatsapp.com"
+LINE = f"{BRAVE} --app=chrome-extension://ophjlpahpchlmihnnnihgmmeilfjmjjc/index.html"
