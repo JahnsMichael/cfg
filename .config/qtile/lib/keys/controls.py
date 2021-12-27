@@ -9,6 +9,10 @@ def toggle_follow_mouse_focus(qtile):
     qtile.config.follow_mouse_focus = not qtile.config.follow_mouse_focus
     qtile.cmd_spawn(f'notify-send "Qtile Config" "follow_mouse_focus set to {qtile.config.follow_mouse_focus}"', shell=True)
 
+def resize_layout_margin(qtile, amount):
+    if qtile.current_layout.margin + amount >= 0:
+       qtile.current_layout.margin += amount
+
 CONTROL_KEYS = [
     Key(["control"], "r", lazy.restart(), desc="Restart Qtile"),
     Key(["control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
@@ -24,6 +28,10 @@ CONTROL_KEYS = [
         desc="Toggle bottom cursor warp"),
     Key(["control"], "minus", lazy.function(toggle_follow_mouse_focus),
         desc="Toggle bottom follow_mouse_focus"),
+    Key([], "equal", lazy.function(resize_layout_margin, 3),
+        desc="Increase layout margin"),
+    Key([], "minus", lazy.function(resize_layout_margin, -3),
+        desc="Decrease layout margin"),
     Key([], "BackSpace", lazy.spawn("dunstctl close"),
         desc="Close the last notification"),
     Key(["control"], "BackSpace", lazy.spawn("dunstctl close-all"),
