@@ -17,8 +17,8 @@ def get_default_screen(systray=False):
             get_top_widgets(systray),
             margin=[6,3,6,3],
             **attrs
-        ), 
-        bottom=bar.Gap(6),
+        ),
+        bottom=bar.Gap(3),
         right=bar.Gap(3),
         left=bar.Gap(3),
     )
