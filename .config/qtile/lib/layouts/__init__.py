@@ -16,7 +16,7 @@ def get_layouts():
     return [
         layout.Columns(
             **layout_theme,
-            border_normal_stack=colors.magenta[0],
+            border_normal_stack=colors.black[3],
             border_focus_stack=colors.blue[1],
             insert_position=1,
             border_on_single=True,
@@ -41,8 +41,8 @@ def get_floating_layout():
         Match(title='branchdialog'),  # gitk
         Match(title='pinentry'),  # GPG key password entry
 
-        # Match(wm_class='pavucontrol'),
         # Match(wm_class='pamac-manager'),
+        Match(wm_class='pavucontrol'),
         Match(wm_class='Conky'),
         Match(wm_class='pentablet'),
     ], **layout_theme)
