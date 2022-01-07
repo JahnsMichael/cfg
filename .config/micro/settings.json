@@ -1,7 +1,12 @@
 {
+    "colorcolumn": 80,
     "colorscheme": "cmc-16-edited",
     "diffgutter": true,
     "linter": false,
+    "mkparents": true,
+    "rmtrailingws": true,
+    "scrollbar": true,
     "softwrap": true,
+    "tabstospaces": true,
     "wordwrap": true
 }
