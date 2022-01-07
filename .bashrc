@@ -224,6 +224,20 @@ source /home/jahnsmichael/.config/broot/launcher/bash/br
 # fzf scripts
 export FZF_DEFAULT_OPTS='--layout=reverse --border'
 
+# Install packages using yay
+ins() {
+    yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}'| xargs -ro yay -S
+}
+
+# Remove installed packages
+rem() {
+    yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rns
+}
+
+# fzf-bash-completion
+# source /home/jahnsmichael/repos/fzf-tab-completion/bash/fzf-bash-completion.sh
+# bind -x '"\t": fzf_bash_completion'
+
 _fzf_complete_gadd() {
     _fzf_complete --multi --reverse --prompt="gadd> " -- "$@" < <(
 		git ls-files -m -o --exclude-standard
@@ -240,8 +254,11 @@ _fzf_complete_gcek() {
 
 [ -n "$BASH" ] && complete -F _fzf_complete_gcek -o default -o bashdefault gcek
 
-source /home/jahnsmichael/repos/fzf-tab-completion/bash/fzf-bash-completion.sh
-bind -x '"\t": fzf_bash_completion'
+# fff
+f() {
+    fff "$@"
+    cd "$(cat "${XDG_CACHE_HOME:=${HOME}/.cache}/fff/.fff_d")"
+}
 
 # startup
 # colorscript random
@@ -254,6 +271,7 @@ alias cfgf='cfg fuzzy status'
 # pass
 export PASSWORD_STORE_ENABLE_EXTENSIONS=true
 
+# sdkman
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
