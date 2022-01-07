@@ -116,6 +116,7 @@ floating_layout = get_floating_layout()
 auto_fullscreen = False
 focus_on_window_activation = "smart"
 reconfigure_screens = True
+auto_minimize = True
 
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
