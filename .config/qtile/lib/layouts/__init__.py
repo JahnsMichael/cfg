@@ -45,5 +45,6 @@ def get_floating_layout():
         Match(wm_class='pavucontrol'),
         Match(wm_class='Conky'),
         Match(wm_class='pentablet'),
+        Match(wm_class='Unity'),
     ], **layout_theme)
     return floating_layout
