@@ -86,16 +86,19 @@ def powerlined(main_widget, color=None, margin_left=3, margin_right=3):
 
 def get_top_widgets(systray=False):
 
-    def get_app_btn(text, color, cmd):
+    def _get_text_with_callback(text, fg, bg, cmd):
         return widget.TextBox(
             text=text,
             font=fonts.ICON,
-            foreground=color,
-            background=colors.common["bg"],
+            foreground=fg,
+            background=bg,
             mouse_callbacks={
                 'Button1': lambda: qtile.cmd_spawn(cmd)
             }
         )
+
+    def get_app_btn(text, color, cmd, bg=colors.common["bg"]):
+        return _get_text_with_callback(text, color, bg, cmd)
 
     APP_BTN = powerlined(widget.WidgetBox(
         widgets=[
@@ -105,7 +108,7 @@ def get_top_widgets(systray=False):
             get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm"),
         ],
         text_closed=fontawesome.ARROW_RIGHT,
-        text_open=fontawesome.ARROW_LEFT + "  ",
+        text_open=fontawesome.ARROW_LEFT + "\t",
         font=fonts.ICON,
         foreground=colors.blue[0],
         background=colors.common["bg"],
@@ -151,19 +154,55 @@ def get_top_widgets(systray=False):
         ),
     ]
 
-    MEMORY = powerlined(widget.Memory(
-        format='{MemPercent}%{MemUsed: .0f}M/{MemTotal: .0f}M',
-        background=colors.magenta[0],
-        foreground=colors.common["bg"],
-        font=fonts.MAIN
-    ))
+    def get_icon(text, color, cmd):
+        return _get_text_with_callback(text, color, None, cmd)
 
-    CLOCK = powerlined(widget.Clock(
-        format='%a, %d %b %Y | %H:%M:%S',
-        background=colors.blue[0],
-        foreground=colors.common["bg"],
-        font=fonts.MAIN
-    ))
+    MEMORY = powerlined([
+        widget.TextBox(
+            text=fontawesome.MEMORY,
+            font=fonts.ICON,
+            background=colors.magenta[0],
+            foreground=colors.common["bg"],
+        ),
+        widget.Memory(
+            format='{MemPercent}%{MemUsed: .0f}M',
+            background=colors.magenta[0],
+            foreground=colors.common["bg"],
+            font=fonts.MAIN
+        )
+    ], color=colors.magenta[0])
+
+    CPU = powerlined([
+        widget.TextBox(
+            text=fontawesome.CPU,
+            font=fonts.ICON,
+            background=colors.green[0],
+            foreground=colors.common["bg"],
+        ),
+        widget.CPU(
+            format='{load_percent}% {freq_current}GHz',
+            background=colors.green[0],
+            foreground=colors.common["bg"],
+            font=fonts.MAIN
+        )
+    ], color=colors.green[0])
+
+    # CPUGRAPH = powerlined(widget.CPU())
+
+    CLOCK = powerlined([
+        widget.TextBox(
+            text=fontawesome.CLOCK,
+            font=fonts.ICON,
+            background=colors.blue[0],
+            foreground=colors.common["bg"],
+        ),
+        widget.Clock(
+            format='%a, %d %b %Y | %H:%M:%S',
+            background=colors.blue[0],
+            foreground=colors.common["bg"],
+            font=fonts.MAIN
+        )
+    ], color=colors.blue[0])
 
     POMODORO = powerlined(widget.Pomodoro(
         color_active=colors.common['accent'],
@@ -201,23 +240,25 @@ def get_top_widgets(systray=False):
     ))
 
     TOP_WIDGETS = [
-        *APP_BTN, SEP_M,
+        *APP_BTN,
+        *GROUPBOX, SEP_M,
         *CURRENT_WINDOW,
         widget.Chord(),
-        *GROUPBOX,
-        *POMODORO,
+        # *POMODORO,
         *MEMORY,
+        *CPU,
         *CLOCK,
         *POWER,
     ]
 
     TOP_WIDGETS_SYSTRAY = [
-        *APP_BTN, SEP_M,
+        *APP_BTN,
+        *GROUPBOX, SEP_M,
         *CURRENT_WINDOW,
         widget.Chord(),
-        *GROUPBOX,
-        *POMODORO,
+        # *POMODORO,
         *MEMORY,
+        *CPU,
         *CLOCK, SEP_M,
         SYSTRAY, SEP_M,
         *POWER,
