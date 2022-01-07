@@ -5,5 +5,5 @@
     "Alt-s": "lua:snippets.Insert",
     "Alt-w": "lua:snippets.Next",
     "CtrlUnderscore": "lua:comment.comment",
-    "F5": "lua:wc.wordCount"
+    "F5": "lua:wc.wordCount",
 }
