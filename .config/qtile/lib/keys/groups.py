@@ -24,7 +24,7 @@ for group in get_groups():
         continue
 
     GROUP_KEYS.extend([
-        Key([], group.name[0], lazy.group[group.name].toscreen(),
+        Key([], group.name[0], lazy.group[group.name].toscreen(toggle=True),
             desc="Switch to group {}".format(group.name)),
         Key(["shift"], group.name[0], lazy.window.togroup(group.name),
             desc="move focused window to group {}".format(group.name)),
