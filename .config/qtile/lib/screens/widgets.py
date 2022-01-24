@@ -1,4 +1,6 @@
-from libqtile import qtile, widget
+from libqtile import qtile
+from qtile_extras import widget
+from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
 from lib.const import colors, fontawesome, fonts
 from lib.screens.custom_widgets.tasklist import CustomTaskList
 from lib.screens.custom_widgets.window_control import WindowControl
@@ -41,93 +43,87 @@ SEP_L_DARK = widget.Sep(
     linewidth=5
 )
 
-def powerlined(main_widget, color=None, margin_left=3, margin_right=3):
+def decorations(
+        color=colors.blue[0],
+        position="single",
+        filled=True,
+        pad=5,
+        rad=3
+    ):
+    pad_y = pad if filled else pad+1
+    attrs_map = {
+        "single": { "filled": filled, "radius": rad, "padding_y": pad_y },
+        "center": { "filled": filled, "radius": 0, "padding_y": pad_y },
+        "left": { "filled": filled, "radius": [rad, 0, 0, rad], "padding_y": pad_y },
+        "right": { "filled": filled, "radius": [0, rad, rad, 0], "padding_y": pad_y },
+    }
 
-    if not color:
-        if isinstance(main_widget, list) or not main_widget.background:
-            color = colors.common["bg"]
-        else:
-            color = main_widget.background
+    position = "single" if position not in attrs_map else position
+    attr = attrs_map[position]
 
-    left = [
+    return {
+        "decorations": [
+            RectDecoration(colour=color, **attr),
+            # BorderDecoration(colour=color, border_width=[3, 0, 0, 0]),
+        ],
+    }
+
+def widget_with_icon(main_widget, icon, color):
+    setattr(
+        main_widget,
+        "decorations",
+        decorations(color, position="right")["decorations"]
+    )
+    return [
         widget.TextBox(
-            text=" ",
-            font=fonts.POWERLINE,
-            padding=0,
-            fontsize=margin_left,
-            foreground=color
-        ),
-        widget.TextBox(
-            text=fontawesome.SEP_ROUNDED_LEFT,
-            font=fonts.POWERLINE,
-            padding=0,
+            text=icon,
+            font=fonts.ICON,
             foreground=color,
-            fontsize=18
+            **decorations(color, position="left", filled=False)
         ),
+        main_widget
     ]
-    right = [
-        widget.TextBox(
-            text=fontawesome.SEP_ROUNDED_RIGHT,
-            font=fonts.POWERLINE,
-            padding=0,
-            fontsize=18,
-            foreground=color
-        ),
-        widget.TextBox(
-            text=" ",
-            font=fonts.POWERLINE,
-            padding=0,
-            fontsize=margin_right
-        ),
-    ]
-    if isinstance(main_widget, list):
-        return [*left, *main_widget, *right]
-    return [*left, main_widget, *right]
 
 def get_top_widgets(systray=False):
 
-    def _get_text_with_callback(text, fg, bg, cmd):
+    def get_app_btn(text, color, cmd, position="center"):
         return widget.TextBox(
-            text=text,
+            text=" " + text + " ",
             font=fonts.ICON,
-            foreground=fg,
-            background=bg,
+            foreground=color,
             mouse_callbacks={
                 'Button1': lambda: qtile.cmd_spawn(cmd)
-            }
+            },
+            # **decorations(colors.common["bg"], position)
         )
 
-    def get_app_btn(text, color, cmd, bg=colors.common["bg"]):
-        return _get_text_with_callback(text, color, bg, cmd)
-
-    APP_BTN = powerlined(widget.WidgetBox(
+    APP_BTN = widget.WidgetBox(
         widgets=[
-            get_app_btn(fontawesome.SEARCH, colors.red[0], "rofi -show drun"),
+            get_app_btn(fontawesome.SEARCH, colors.red[0], "rofi -show drun", "left"),
             get_app_btn(fontawesome.CODE, colors.brown[0], "/usr/bin/codium -n"),
             get_app_btn(fontawesome.WEB, colors.blue[0], "/usr/bin/brave"),
-            get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm"),
+            get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm", "right"),
         ],
-        text_closed=fontawesome.ARROW_RIGHT,
-        text_open=fontawesome.ARROW_LEFT + "\t",
+        text_closed="  " + fontawesome.ARROW_RIGHT + " ",
+        text_open="  "+ fontawesome.ARROW_LEFT + "\t",
         font=fonts.ICON,
         foreground=colors.blue[0],
-        background=colors.common["bg"],
-    ))
+    )
 
-    GROUPBOX = powerlined(widget.GroupBox(
+    GROUPBOX = widget.GroupBox(
         other_current_screen_border=colors.common['ui'],
         other_screen_border=colors.common['ui'],
-        inactive=colors.common['ui'],
+        inactive=colors.common['bg'],
         urgent_border=colors.red[2],
         padding=5,
-        rounded=True,
-        highlight_method="line",
+        # rounded=False,
+        highlight_method="block",
         this_screen_border=colors.brown[3],
         this_current_screen_border=colors.blue[1],
         hide_unused=True,
-        background=colors.common["bg"],
         center_aligned=True,
-    ))
+        **decorations(colors.common["bg"], "single")
+    )
 
     CURRENT_WINDOW = [
         *[WindowControl(
@@ -139,129 +135,104 @@ def get_top_widgets(systray=False):
         SEP_S,
         CustomTaskList(
             border=colors.brown[2],
-            borderwidth=0,
             rounded=True,
-            title_width_method="uniform",
             highlight_method='block',
             txt_floating=f"{fontawesome.FLOAT} ",
             txt_maximized=f"{fontawesome.MAXIMIZE} ",
             txt_minimized=f"{fontawesome.MINIMIZE} ",
-            margin=0,
             spacing=5,
-            icon_size=12,
+            padding=5,
+            icon_size=0,
             max_title_width=200,
             urgent_border=colors.red[0],
         ),
     ]
 
-    def get_icon(text, color, cmd):
-        return _get_text_with_callback(text, color, None, cmd)
 
-    MEMORY = powerlined([
-        widget.TextBox(
-            text=fontawesome.MEMORY,
-            font=fonts.ICON,
-            background=colors.magenta[0],
-            foreground=colors.common["bg"],
+    MEMORY = widget_with_icon(
+        main_widget=widget.Memory(
+            format='RAM {MemPercent}%{MemUsed: .0f}M',
+            foreground=colors.common['bg']
         ),
-        widget.Memory(
-            format='{MemPercent}%{MemUsed: .0f}M',
-            background=colors.magenta[0],
-            foreground=colors.common["bg"],
-            font=fonts.MAIN
-        )
-    ], color=colors.magenta[0])
+        icon=fontawesome.MEMORY,
+        color=colors.magenta[0]
+    )
 
-    CPU = powerlined([
-        widget.TextBox(
-            text=fontawesome.CPU,
-            font=fonts.ICON,
-            background=colors.green[0],
-            foreground=colors.common["bg"],
-        ),
-        widget.CPU(
+    CPU = widget_with_icon(
+        main_widget=widget.CPU(
             format='{load_percent}% {freq_current}GHz',
-            background=colors.green[0],
-            foreground=colors.common["bg"],
-            font=fonts.MAIN
-        )
-    ], color=colors.green[0])
-
-    # CPUGRAPH = powerlined(widget.CPU())
-
-    CLOCK = powerlined([
-        widget.TextBox(
-            text=fontawesome.CLOCK,
-            font=fonts.ICON,
-            background=colors.blue[0],
-            foreground=colors.common["bg"],
+            foreground=colors.common['bg']
         ),
-        widget.Clock(
-            format='%a, %d %b %Y | %H:%M:%S',
-            background=colors.blue[0],
-            foreground=colors.common["bg"],
-            font=fonts.MAIN
-        )
-    ], color=colors.blue[0])
+        icon=fontawesome.CPU,
+        color=colors.green[0]
+    )
 
-    POMODORO = powerlined(widget.Pomodoro(
-        color_active=colors.common['accent'],
-        color_break=colors.green[0],
-        color_inactive=colors.common['fg'],
-        background=colors.common['bg'],
-    ))
+    CLOCK = widget_with_icon(
+        main_widget=widget.Clock(
+            format='%a, %d %b %Y | %H:%M:%S',
+            foreground=colors.common['bg']
+        ),
+        icon=fontawesome.CLOCK,
+        color=colors.blue[0]
+    )
 
     SYSTRAY = widget.Systray(
         icon_size=15
     )
 
-    def get_power_btn(text, cmd):
+    def get_power_btn(text, cmd, position="center"):
         return widget.TextBox(
-            text=text,
+            text=" " + text + " ",
             font=fonts.ICON,
-            background=colors.red[0],
             mouse_callbacks={
                 'Button1': cmd
-            }
+            },
+            **decorations(colors.red[0], position)
         )
 
-    POWER = powerlined(widget.WidgetBox(
+    POWER = widget.WidgetBox(
         widgets=[
-            get_power_btn(fontawesome.POWER, lambda:  qtile.cmd_spawn('shutdown now')),
+            get_power_btn(fontawesome.POWER, lambda:  qtile.cmd_spawn('shutdown now'), "left"),
             get_power_btn(fontawesome.REBOOT, lambda:  qtile.cmd_spawn('reboot')),
             get_power_btn(fontawesome.LOGOUT, lambda:  qtile.cmd_shutdown()),
             get_power_btn(fontawesome.SLEEP, lambda:  qtile.cmd_spawn("betterlockscreen -s")),
-            get_power_btn(fontawesome.LOCK, lambda:  qtile.cmd_spawn("betterlockscreen -l")),
+            get_power_btn(fontawesome.LOCK, lambda:  qtile.cmd_spawn("betterlockscreen -l"), "right"),
         ],
-        text_closed=fontawesome.POWER,
-        text_open=fontawesome.CLOSE + "   ",
-        background=colors.red[0],
+        text_closed="  " + fontawesome.POWER + "  ",
+        text_open="  " + fontawesome.CLOSE + "  ",
         font=fonts.ICON,
-    ))
+        foreground=colors.red[0]
+    )
+
+    WORD_CLOCK = widget.WordClock(
+        background=colors.common['bg'],
+        active=colors.blue[0],
+        font=fonts.MAIN
+    )
 
     TOP_WIDGETS = [
-        *APP_BTN,
-        *GROUPBOX, SEP_M,
+        APP_BTN, SEP_M,
+        GROUPBOX, SEP_M,
         *CURRENT_WINDOW,
         widget.Chord(),
-        # *POMODORO,
-        *MEMORY,
-        *CPU,
-        *CLOCK,
-        *POWER,
+        *MEMORY, SEP_M,
+        *CPU, SEP_M,
+        *CLOCK, SEP_M,
+        POWER, SEP_S,
+        # WORD_CLOCK
     ]
 
     TOP_WIDGETS_SYSTRAY = [
-        *APP_BTN,
-        *GROUPBOX, SEP_M,
+        APP_BTN, SEP_M,
+        GROUPBOX, SEP_M,
         *CURRENT_WINDOW,
         widget.Chord(),
-        # *POMODORO,
-        *MEMORY,
-        *CPU,
+        *MEMORY, SEP_M,
+        *CPU, SEP_M,
         *CLOCK, SEP_M,
         SYSTRAY, SEP_M,
-        *POWER,
+        POWER, SEP_S,
+        # WORD_CLOCK
     ]
 
     if systray:
