@@ -143,7 +143,7 @@ export EDITOR=/usr/bin/micro
 
 # custom aliases
 alias ll="exa -la"
-alias code="codium"
+# alias code="codium"
 alias pentablet="/usr/lib/pentablet/pentablet.sh &"
 alias py="python3"
 alias pyenv="source env/bin/activate"
@@ -174,6 +174,7 @@ alias .............="cd ../../../../../../../../../../../.."
 # git aliases
 alias g="git"
 alias gf="git fuzzy status"
+alias lg="lazygit"
 alias gadd="git add"
 alias gcomm="git commit -m"
 alias gstat="git status --short"
@@ -266,6 +267,7 @@ f() {
 
 # Git Bare
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias lcfg='/usr/bin/lazygit --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias cfgf='cfg fuzzy status'
 
 # pass
