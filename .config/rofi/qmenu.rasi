@@ -1,0 +1,42 @@
+/**
+ * Rofi theme made by Qball and forked by Robijntje for use in his Qtile setup.
+ */
+* {
+    background-color:      #1b1c1d ;
+    border-color:          #1b1c1d;
+    text-color:            #adadad;
+    font:            	"DejaVu Sans Mono 10";
+}
+
+window {
+    anchor:     north;
+    location:   north;
+    width:      100%;
+    padding:    4px;
+    children:   [ horibox ];
+}
+
+horibox {
+    orientation: horizontal;
+    children:   [ entry, listview ];
+}
+
+listview {
+    layout:     horizontal;
+    spacing:    5px;
+    lines:      100;
+}
+
+entry {
+    expand:     false;
+    width:      10em;
+    padding: 0px 9px;
+}
+
+element {
+    padding: 0px 1px;
+}
+element selected {
+    background-color: #f8511b;
+    color: #ffffff;
+}

@@ -1,16 +1,17 @@
 configuration {
-  font: "Fira Sans Light 10";
-  width: 30;
+  font: "Fira Sans Regular 10";
+  width: 20;
   line-margin: 10;
   lines: 6;
-  columns: 4;
+  columns: 2;
 
   display-ssh: "";
   display-run: "";
   display-drun: "";
   display-window: "";
   display-combi: "";
-  show-icons: false;
+  show-icons: true;
+  icon-theme: "Yaru-dark";
 }
 
 * {
@@ -49,7 +50,7 @@ configuration {
   red2: #d96c75;
 
   foreground: @black1;
-  accent: @brown0;
+  accent: @brown2;
   backlight: #ccffeedd;
   background-color: transparent;
 
@@ -59,23 +60,28 @@ configuration {
 }
 
 window {
-  fullscreen: true;
-  location: center;
-  anchor: center;
+  fullscreen: false;
+  location: north west;
+  anchor: north west;
+  width: 97%;
+  height: 97%;
   transparency: "screenshot";
-  padding: 100px;
-  border: 0px;
-  border-radius: 3px;
+  padding: 20px;
+  /* border: 0px 3px 3px 0px;
+  border-radius: 0px 0px 3px 0px; */
+  border-color: @accent;
+  x-offset: 40px;
+  y-offset: 30px;
 
   background-color: @black0;
-  spacing: 0;
+  spacing: 5;
   children: [mainbox];
   orientation: horizontal;
 }
 
 mainbox {
   spacing: 0;
-  children: [ inputbar, message, listview ];
+  children: [ inputbar, message, listview, mode-switcher ];
 }
 
 message {
@@ -113,19 +119,39 @@ listview {
   dynamic: false;
   lines: 6;
   columns: 4;
+  fixed-height: true;
+  fixed-columns: true;
+}
+
+element {
+  orientation: vertical;
+  children: [ element-icon, element-text ];
+  /* spacing: 5px; */
+  padding: 10px;
+  margin: 10px 70px;
+  border-radius: 2px;
 }
 
 element-text {
   vertical-align: 0.5;
+  horizontal-align: 0.5;
   border-radius: 2px;
   padding: 3px;
   background-color: transparent;
   text-color: #ffffff;
 }
 
-element-text selected.normal {
+element selected.normal {
   background-color: @accent;
+}
+
+element-text selected.normal {
   text-color: #2e3440;
+}
+
+element-icon {
+  size: 3em;
+  margin: 10px;
 }
 
 button {
@@ -139,6 +165,11 @@ button {
 }
 
 button selected normal {
-  border: 2px 0px 2px 2px;
-  border-color: @foreground;
+  border: 2px;
+  border-radius: 4px;
+  background-color: @accent;
+}
+
+mode-switcher {
+
 }
