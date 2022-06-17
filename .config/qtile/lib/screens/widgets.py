@@ -1,9 +1,12 @@
 from libqtile import qtile
+from libqtile import widget as default_widget
 from qtile_extras import widget
 from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
-from lib.const import colors, fontawesome, fonts
+from lib.const import colors, fontawesome, fonts, apps
 from lib.screens.custom_widgets.tasklist import CustomTaskList
 from lib.screens.custom_widgets.window_control import WindowControl
+from os.path import exists
+from os import walk
 
 SEP_S = widget.TextBox(
     text=" ",
@@ -48,7 +51,7 @@ def decorations(
         position="single",
         filled=True,
         pad=5,
-        rad=3
+        rad=10
     ):
     pad_y = pad if filled else pad+1
     attrs_map = {
@@ -76,7 +79,7 @@ def widget_with_icon(main_widget, icon, color):
     )
     return [
         widget.TextBox(
-            text=icon,
+            text=f' {icon} ',
             font=fonts.ICON,
             foreground=color,
             **decorations(color, position="left", filled=False)
@@ -113,37 +116,44 @@ def get_top_widgets(systray=False):
     GROUPBOX = widget.GroupBox(
         other_current_screen_border=colors.common['ui'],
         other_screen_border=colors.common['ui'],
-        inactive=colors.common['bg'],
+        inactive=colors.black[2],
         urgent_border=colors.red[2],
         padding=5,
         # rounded=False,
         highlight_method="block",
         this_screen_border=colors.brown[3],
         this_current_screen_border=colors.blue[1],
-        hide_unused=True,
+        # hide_unused=True,
         center_aligned=True,
         **decorations(colors.common["bg"], "single")
     )
 
     CURRENT_WINDOW = [
         *[WindowControl(
-            action_type=action,
+            action_type=attrs["action"],
             font=fonts.ICON,
             fontsize=10,
-            padding=5
-        ) for action in ["KILL","MAX", "MIN", "FLOAT"]],
+            padding=5,
+            # **decorations(colors.black[2], attrs["position"])
+        ) for attrs in [
+            {"action": "KILL", "position": "left"},
+            {"action": "MAX", "position": "center"},
+            {"action": "MIN", "position": "center"},
+            {"action": "FLOAT", "position": "right"},
+        ]],
         SEP_S,
         CustomTaskList(
             border=colors.brown[2],
-            rounded=True,
+            rounded=False,
             highlight_method='block',
             txt_floating=f"{fontawesome.FLOAT} ",
             txt_maximized=f"{fontawesome.MAXIMIZE} ",
             txt_minimized=f"{fontawesome.MINIMIZE} ",
             spacing=5,
-            padding=5,
-            icon_size=0,
-            max_title_width=200,
+            padding=8,
+            icon_size=15,
+            title_width_method="uniform",
+            # max_title_width=200,
             urgent_border=colors.red[0],
         ),
     ]
@@ -151,7 +161,7 @@ def get_top_widgets(systray=False):
 
     MEMORY = widget_with_icon(
         main_widget=widget.Memory(
-            format='RAM {MemPercent}%{MemUsed: .0f}M',
+            format='{MemPercent}% ',
             foreground=colors.common['bg']
         ),
         icon=fontawesome.MEMORY,
@@ -160,20 +170,17 @@ def get_top_widgets(systray=False):
 
     CPU = widget_with_icon(
         main_widget=widget.CPU(
-            format='{load_percent}% {freq_current}GHz',
+            format='{load_percent}% ',
             foreground=colors.common['bg']
         ),
         icon=fontawesome.CPU,
         color=colors.green[0]
     )
 
-    CLOCK = widget_with_icon(
-        main_widget=widget.Clock(
-            format='%a, %d %b %Y | %H:%M:%S',
-            foreground=colors.common['bg']
-        ),
-        icon=fontawesome.CLOCK,
-        color=colors.blue[0]
+    CLOCK = widget.Clock(
+        format='%a, %d %b %Y   %H:%M:%S',
+        foreground="#ffffff",
+        font=fonts.BOLD
     )
 
     SYSTRAY = widget.Systray(
@@ -210,110 +217,78 @@ def get_top_widgets(systray=False):
         font=fonts.MAIN
     )
 
+    LAYOUT_ICON = widget.CurrentLayoutIcon(
+        padding=0,
+        scale=0.4,
+        **decorations(colors.blue[0], "single")
+    )
+
     TOP_WIDGETS = [
-        APP_BTN, SEP_M,
+        SEP_S, CLOCK, SEP_S,
+        *CURRENT_WINDOW, SEP_M,
+        LAYOUT_ICON, SEP_M,
         GROUPBOX, SEP_M,
-        *CURRENT_WINDOW,
-        widget.Chord(),
+        widget.Chord(), SEP_M,
         *MEMORY, SEP_M,
         *CPU, SEP_M,
-        *CLOCK, SEP_M,
         POWER, SEP_S,
-        # WORD_CLOCK
     ]
 
-    TOP_WIDGETS_SYSTRAY = [
-        APP_BTN, SEP_M,
-        GROUPBOX, SEP_M,
-        *CURRENT_WINDOW,
-        widget.Chord(),
-        *MEMORY, SEP_M,
-        *CPU, SEP_M,
-        *CLOCK, SEP_M,
-        SYSTRAY, SEP_M,
-        POWER, SEP_S,
-        # WORD_CLOCK
-    ]
+    TOP_WIDGETS_SYSTRAY = TOP_WIDGETS.copy()
+    TOP_WIDGETS_SYSTRAY.insert(-2, SYSTRAY)
+    TOP_WIDGETS_SYSTRAY.insert(-2, SEP_M)
 
     if systray:
         return TOP_WIDGETS_SYSTRAY
     return TOP_WIDGETS
 
+def get_left_widgets():
 
-def get_bottom_widgets(systray=False):
-    def get_app_btn(text, color, cmd):
-        return widget.TextBox(
-            text=text,
-            font=fonts.ICON,
-            foreground=color,
-            background=colors.black[4],
+    def get_app_btn(icon_name, cmd, icon_theme="/usr/share/icons/hicolor/128x128/apps/", spawn=True):
+
+        fallback_icon_dir = "/usr/share/icons"
+        filename = ""
+
+        if exists(f"{icon_theme}{icon_name}.png"):
+            filename = f"{icon_theme}{icon_name}.png"
+        elif exists(f"{icon_theme}{icon_name}.svg"):
+            filename = f"{icon_theme}{icon_name}.svg"
+        else:
+            for root, dirs, files in walk(fallback_icon_dir):
+                if len(filename) != 0:
+                    break
+                for file in files:
+                    if len(filename) != 0 :
+                        break
+                    if (icon_name in file) and (".png" in file or ".svg" in file):
+                        filename = f"{root}/{str(file)}"
+                        break
+        
+        func = cmd
+        if spawn:
+            func = lambda: qtile.cmd_spawn(cmd)
+
+        return widget.Image(
+            filename=filename,
             mouse_callbacks={
-                'Button1': lambda: qtile.cmd_spawn(cmd)
-            }
+                'Button1': func
+            },
+            margin=5,
         )
 
-    APP_BTN = [
-        get_app_btn(fontawesome.SEARCH, colors.red[0], "rofi -show drun"),
-        get_app_btn(fontawesome.CODE, colors.brown[0], "/usr/bin/codium -n"),
-        get_app_btn(fontawesome.WEB, colors.blue[0], "/usr/bin/brave"),
-        get_app_btn(fontawesome.FOLDER, colors.green[0], "/usr/bin/pcmanfm"),
+    icon_theme = "/usr/share/icons/Yaru++-Dark/apps/48/"
+    icon_theme_places = "/usr/share/icons/Yaru++/places/scalable/"
+
+    LEFT_WIDGETS = [
+            get_app_btn("ubuntu-logo-icon", "rofi -show drun", icon_theme_places),
+            get_app_btn("window-duplicate", "rofi -show window", icon_theme),
+            get_app_btn("workspace-switcher-left-top", lambda : qtile.groups_map["scratchpad"].cmd_dropdown_toggle('term'), icon_theme, spawn=False),
+            widget.Sep(padding=10),
+            get_app_btn("brave-desktop", apps.WEB, icon_theme),
+            get_app_btn("file-manager", apps.FILE, icon_theme),
+            get_app_btn("terminal", apps.TERM, icon_theme),
+            get_app_btn("logseq", "/usr/bin/logseq", icon_theme),
+            get_app_btn("code", "/usr/bin/code", icon_theme),
     ]
 
-    APP_LIST = CustomTaskList(
-        border=colors.brown[2],
-        rounded=False,
-        highlight_method='block',
-        txt_floating=f"{fontawesome.FLOAT} ",
-        txt_maximized=f"{fontawesome.MAXIMIZE} ",
-        txt_minimized=f"{fontawesome.MINIMIZE} ",
-        padding=4,
-        margin=0,
-        icon_size=15,
-        max_title_width=200,
-        urgent_border=colors.red[0]
-    )
-
-    MUSIC = widget.Moc(
-        foreground=colors.brown[1],
-        play_color=colors.brown[1],
-        noplay_color=colors.brown[0],
-    )
-
-    SYSTRAY = widget.Systray(
-        foreground=colors.black[5],
-        background=colors.black[4]
-    )
-    POWER = widget.QuickExit(
-        default_text=fontawesome.POWER,
-        foreground=colors.red[0],
-        font=fonts.ICON,
-        background=colors.black[4]
-    )
-
-    BOTTOM_WIDGETS_SYSTRAY = [
-        SEP_S_DARK,
-        *APP_BTN,
-        SEP_L_DARK,
-        APP_LIST, SEP_S,
-        MUSIC, SEP_S,
-        SEP_S_DARK,
-        SYSTRAY,
-        SEP_L_DARK,
-        POWER,
-        SEP_L_DARK
-    ]
-
-    BOTTOM_WIDGETS = [
-        SEP_S_DARK,
-        *APP_BTN,
-        SEP_L_DARK,
-        APP_LIST, SEP_S,
-        MUSIC, SEP_S,
-        SEP_L_DARK,
-        POWER,
-        SEP_L_DARK
-    ]
-
-    if systray:
-        return BOTTOM_WIDGETS_SYSTRAY
-    return BOTTOM_WIDGETS
+    return LEFT_WIDGETS

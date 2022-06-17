@@ -6,7 +6,7 @@ from lib.const import colors, fonts
 layout_theme = {
     "border_width": 2,
     "font": fonts.MAIN,
-    "margin": 2,
+    # "margin": 2,
     "border_focus": colors.brown[2],
     "border_normal": colors.common['bg']
 }
@@ -19,8 +19,10 @@ def get_layouts():
             border_normal_stack=colors.black[3],
             border_focus_stack=colors.blue[1],
             insert_position=1,
-            border_on_single=True,
+            num_columns=2,
+            # border_on_single=True,
         ),
+        layout.Max(),
         # BorderOnSingleBSP(
             # **layout_theme,
             # border_on_single=True,

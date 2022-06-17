@@ -6,13 +6,34 @@ from lib.const import apps
 SCRATCHPAD_KEYS = [
     Key([], "Return", lazy.group["scratchpad"].dropdown_toggle('term'),
         desc="Launch terminal"),
+    # Key([], "space", lazy.group["scratchpad"].dropdown_toggle('run'),
+        # desc="Launch CLI run launcher inside a terminal"),
 ]
+
+def send_window_to_next_group(qtile):
+    current_group = int(qtile.current_group.name)
+    next_group = current_group + 1
+    if (next_group == 10):
+        next_group = 0
+    qtile.current_window.togroup(str(next_group))
+
+def send_window_to_previous_group(qtile):
+    current_group = int(qtile.current_group.name)
+    prev_group = current_group - 1
+    if (prev_group == -1):
+        prev_group = 9
+    qtile.current_window.togroup(str(prev_group))
+
 
 GROUP_CYCLE_KEYS = [
     Key([], "period", lazy.screen.next_group(),
             desc="Move to the group on the right"),
     Key([], "comma", lazy.screen.prev_group(),
         desc="Move to the group on the left"),
+    Key(["shift"], "period", lazy.function(send_window_to_next_group),
+            desc="Send window to the group on the right"),
+    Key(["shift"], "comma", lazy.function(send_window_to_previous_group),
+        desc="Send window to the group on the left"),
 ]
 
 GROUP_KEYS = [*SCRATCHPAD_KEYS, *GROUP_CYCLE_KEYS]

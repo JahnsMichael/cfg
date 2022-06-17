@@ -1,9 +1,10 @@
 #!/bin/sh
 lxsession &
-picom --experimental-backend &
+# $HOME/scripts/vidbg && sleep 1 && picom --experimental-backend &
 nitrogen --restore &
+picom --experimental-backend &
 volumeicon &
-# conky &
+conky &
 dunst &
 xset s off -dpms
 cbatticon -l 20 -r 10 &

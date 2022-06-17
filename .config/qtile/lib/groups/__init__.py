@@ -33,8 +33,15 @@ GROUPS.append(
             "term",
             "alacritty",
             opacity=1.0,
-            x=0.05, y=0.05,
-            width=0.9, height=0.9,
+            x=0, y=0,
+            width=0.7, height=0.7,
+        ),
+        DropDown(
+            "run",
+            "alacritty -e fmenu --hold",
+            opacity=1.0,
+            x=-0.015, y=0.25,
+            width=0.2, height=0.5,
         ),
     ]))
 

@@ -51,8 +51,8 @@ WINDOW_SIZE_KEYS = [
     ],
     Key([], "n", lazy.layout.normalize(),
         desc="Reset all window sizes"),
-    Key(["mod1"], "Return", lazy.window.toggle_maximize(),
-        desc="Toggle maximize window"),
+    # Key(["mod1"], "Return", lazy.window.toggle_maximize(),
+        # desc="Toggle maximize window"),
 ]
 
 def move(qtile, direction):

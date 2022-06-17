@@ -1,4 +1,4 @@
-CODE = "/usr/bin/codium -n"
+CODE = "/usr/bin/code"
 TERM = "/usr/bin/alacritty"
 FILE = "/usr/bin/pcmanfm"
 PAMAC = "/usr/bin/pamac-manager"

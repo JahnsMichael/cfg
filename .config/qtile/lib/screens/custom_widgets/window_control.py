@@ -1,9 +1,9 @@
-from libqtile.widget.textbox import TextBox
+from qtile_extras import widget
 from libqtile import hook
 from lib.const import fontawesome, colors
 from libqtile.widget import base
 
-class WindowControl(TextBox):
+class WindowControl(widget.TextBox):
 
     action_type = None
 

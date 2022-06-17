@@ -1,17 +1,4 @@
-
-#   ▄▄█▀▀██▄                               ▀███▀▀▀██▄ ▀███▀▀▀███
-# ▄██▀    ▀██▄                               ██    ▀██▄ ██    ▀█
-# ██▀      ▀██ ▄█▀██▄ ▀██▀   ▀██▀███  ▀███   ██     ▀██ ██   █
-# ██        ████   ██   ██   ▄█   ██    ██   ██      ██ ██████
-# ██▄      ▄██ ▄█████    ██ ▄█    ██    ██   ██     ▄██ ██   █  ▄
-# ▀██▄    ▄██▀██   ██     ███     ██    ██   ██    ▄██▀ ██     ▄█
-#   ▀▀████▀▀  ▀████▀██▄   ▄█      ▀████▀███▄████████▀ ▄██████████
-#       ███             ▄█
-#        ▀████▀       ██▀
-
 # Qtile config for Jahns Michael's desktop.
-
-# Inpired by Ayu Colorschemes https://github.com/ayu-theme/ayu-colors.
 
 from typing import List  # noqa: F401
 
@@ -109,11 +96,11 @@ mouse = get_mouse()
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: List
 main = None  # WARNING: this is deprecated and will be removed soon
-follow_mouse_focus = True
-bring_front_click = False
-cursor_warp = True
+follow_mouse_focus = False
+bring_front_click = True
+cursor_warp = False
 floating_layout = get_floating_layout()
-auto_fullscreen = False
+auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
 auto_minimize = True

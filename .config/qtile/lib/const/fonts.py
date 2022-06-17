@@ -1,4 +1,5 @@
-MAIN = "Fira Sans"
+MAIN = "Quicksand"
+BOLD = "Quicksand Bold"
 MONO = "Victor Mono"
-ICON = "Font Awesome 5 Free Solid"
+ICON = "Font Awesome 6 Free Solid"
 POWERLINE = "DroidSansMono Nerd Font"
